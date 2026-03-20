@@ -1,0 +1,2 @@
+Customer Churn Risk Dashboard
+I am building a project that will make predictions on customer churns. I will use a CSV customer churn dataset and train a PyTorch classification model to predict whether a customer will churn. The model send scustomer records through Kafka as if they are arriving from a business system. Scored outputs will be sent to AWS S3 and Tableau will display the results.
