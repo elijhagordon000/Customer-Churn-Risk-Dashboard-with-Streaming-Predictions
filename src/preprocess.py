@@ -187,3 +187,13 @@ ct = ColumnTransformer(
 
 X_train = ct.fit_transform(X_train)
 X_test = ct.transform(X_test)
+#Turning numpy arrays back to dataframes to give the training and testing column names
+feature_names = ct.get_feature_names_out()
+X_train = pd.DataFrame(X_train, columns=feature_names)
+X_test = pd.DataFrame(X_test, columns=feature_names)
+
+X_train.to_csv("data/processed/X_train.csv", index=False)
+X_test.to_csv("data/processed/X_test.csv", index=False)
+Y_train.to_csv("data/processed/y_train.csv", index=False)
+Y_test.to_csv("data/processed/y_test.csv", index=False)
+
