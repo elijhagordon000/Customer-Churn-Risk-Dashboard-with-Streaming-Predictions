@@ -25,6 +25,17 @@ X_test_tensor = torch.tensor(X_test.values, dtype=torch.float32) # torch.Size([1
 Y_train_tensor = torch.tensor(Y_train.values, dtype=torch.float32) # torch.Size([5634, 1])
 Y_test_tensor = torch.tensor(Y_test.values, dtype=torch.float32) # torch.Size([1409, 1])
 
+
+# Penalizing innaccurate labeling of churners count more heavily than mistakes on non-churners
+num_neg = (Y_train_tensor == 0).float().sum()
+num_pos = (Y_train_tensor == 1).float().sum()
+
+pos_weight = num_neg / num_pos
+
+print(f"pos_weight: {pos_weight.item():.4f}")
+
+pos_weight
+
 # Building a neural net
 
 model = nn.Sequential(
@@ -33,7 +44,7 @@ model = nn.Sequential(
     nn.Linear(64,1) # Output layer 64 -> 1
 )
 
-criterion = nn.BCEWithLogitsLoss() #Binary classification loss function
+criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight) #Binary classification loss function
 
 # Adam = the optimization algorithm
 # model.parameters() = tells PyTorch which weights/biases to update
@@ -43,7 +54,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 train_losses = []
 # Training Loop:
 
-epochs = 5
+epochs = 20
 
 for epoch in range(epochs):
     model.train()
@@ -75,8 +86,17 @@ for epoch in range(epochs):
     print(f"Train Loss: {loss.item():.4f}")
     print(f"Test Loss: {test_loss.item():.4f}")
     print(f"Accuracy: {accuracy.item():.4f}")
-    print(f"Predicted positive rate: {test_preds.mean().item():.4f}")
-    print(f"Actual positive rate: {Y_test_tensor.mean().item():.4f}")
+    tp = ((test_preds == 1) & (Y_test_tensor == 1)).float().sum()
+    tn = ((test_preds == 0) & (Y_test_tensor == 0)).float().sum()
+    fp = ((test_preds == 1) & (Y_test_tensor == 0)).float().sum()
+    fn = ((test_preds == 0) & (Y_test_tensor == 1)).float().sum()
+    predicted_positive_rate = test_preds.mean()
+    actual_positive_rate = Y_test_tensor.mean()
+    recall = tp / (tp + fn + 1e-8)
+    print(f"Predicted positive rate: {predicted_positive_rate.item():.4f}")
+    print(f"Actual positive rate: {actual_positive_rate.item():.4f}")
+    print(f"Recall for churners: {recall.item():.4f}")
+    print(f"TP: {tp.item():.0f}, FP: {fp.item():.0f}, TN: {tn.item():.0f}, FN: {fn.item():.0f}")
 
 torch.save(model.state_dict(), MODEL_PATH)
 print(f"Model saved to: {MODEL_PATH}")
