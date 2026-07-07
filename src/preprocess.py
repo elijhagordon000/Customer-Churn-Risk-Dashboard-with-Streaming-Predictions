@@ -4,6 +4,16 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import MinMaxScaler
 
 df = pd.read_csv('data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv')
+
+# Human readable columns for later Tableau / scored output
+readable_df = df[[
+    "tenure",
+    "MonthlyCharges",
+    "TotalCharges",
+    "Contract",
+    "InternetService"
+]].copy()
+
 # Splitting TotalCharges Values:
 df["TotalCharges"] = df["TotalCharges"].str.strip()
 df["TotalCharges"] = df["TotalCharges"].replace("", "0")
@@ -166,9 +176,10 @@ features_df = pd.concat([features_df, payment_method_encode], axis=1)
 target_series = target_series.replace({"Yes": 1, "No": 0})
 
 # Splitting Training and Testing sets
-X_train, X_test, Y_train, Y_test = train_test_split(
+X_train, X_test, Y_train, Y_test, readable_X_train, readable_X_test  = train_test_split(
     features_df,
     target_series,
+    readable_df,
     test_size=0.2,
     random_state=42,
     stratify=target_series
@@ -196,4 +207,5 @@ X_train.to_csv("data/processed/X_train.csv", index=False)
 X_test.to_csv("data/processed/X_test.csv", index=False)
 Y_train.to_csv("data/processed/y_train.csv", index=False)
 Y_test.to_csv("data/processed/y_test.csv", index=False)
-
+readable_X_train.to_csv("data/processed/readable_X_train.csv", index=False)
+readable_X_test.to_csv("data/processed/readable_X_test.csv", index=False)
