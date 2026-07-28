@@ -5,3 +5,4 @@ Notes.txt
 .aws/
 .env
 *.pem
+AWSCLIV2.pkg
