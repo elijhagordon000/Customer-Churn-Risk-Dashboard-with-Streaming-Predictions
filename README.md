@@ -1,9 +1,14 @@
 # Customer Churn Risk Dashboard with Streaming Predictions
-
+Video Breakdown:
+https://youtu.be/HPuHkRxtU44
 I have produced a machine learning pipeline that predicts telecommunications
 customer churn using PyTorch. It simulates streaming customer events
 with Apache Kafka, stores prediction outputs in AWS S3, and presents
 risk patterns through an interactive Tableau dashboard.
+
+## 🎥 Project Walkthrough
+
+[▶ Watch the project walkthrough on YouTube](https://youtu.be/HPuHkRxtU44)
 
 ## Dashboard
 ![alt text](tableau/dashboard.png)
